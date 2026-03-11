@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Create Doc"
+  short_description: "Create Feishu docs from markdown"
+  default_prompt: "Use $feishu-create-doc to create Feishu cloud documents from Lark-flavored Markdown."

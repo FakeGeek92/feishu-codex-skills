@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Task"
+  short_description: "Manage Feishu tasks and tasklists"
+  default_prompt: "Use $feishu-task to create, query, update, and organize Feishu tasks and tasklists."

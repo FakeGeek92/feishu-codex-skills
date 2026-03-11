@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Troubleshoot"
+  short_description: "Diagnose Feishu skill auth, token, and scope issues"
+  default_prompt: "Use $feishu-troubleshoot to diagnose Feishu app credentials, tenant auth, OAuth token status, and missing scopes."

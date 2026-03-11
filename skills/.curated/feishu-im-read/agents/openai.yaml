@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu IM Read"
+  short_description: "Read Feishu chat messages and download message resources"
+  default_prompt: "Use $feishu-im-read to read Feishu messages, thread replies, search chats, and download resources."

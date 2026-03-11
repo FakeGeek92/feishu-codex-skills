@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Update Doc"
+  short_description: "Update Feishu docs with append and replace modes"
+  default_prompt: "Use $feishu-update-doc to update Feishu cloud documents with append, overwrite, replace, insert, and delete operations."

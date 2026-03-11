@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Fetch Doc"
+  short_description: "Fetch Feishu doc content"
+  default_prompt: "Use $feishu-fetch-doc to fetch Feishu cloud document content."

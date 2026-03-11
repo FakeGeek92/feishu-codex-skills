@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Bitable"
+  short_description: "Manage Feishu Bitable tables, fields, views, and records"
+  default_prompt: "Use $feishu-bitable to manage Feishu Bitable apps, tables, fields, views, and records."

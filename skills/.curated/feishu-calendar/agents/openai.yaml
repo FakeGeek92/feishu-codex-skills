@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Calendar"
+  short_description: "Manage Feishu calendars, events, attendees, and free/busy"
+  default_prompt: "Use $feishu-calendar to manage Feishu calendar events, attendees, and free/busy data."

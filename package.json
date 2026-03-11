@@ -1,0 +1,10 @@
+{
+  "name": "feishu-codex-skills",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-runtime": "node scripts/sync-runtime.mjs",
+    "test": "node --test tests/*.test.js",
+    "validate": "node scripts/validate-all.mjs"
+  }
+}

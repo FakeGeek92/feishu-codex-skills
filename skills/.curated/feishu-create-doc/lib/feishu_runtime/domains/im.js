@@ -7,6 +7,8 @@ import { requestBinary, requestJson } from "../core/http.js";
 import { fromMillis, parseRelativeTimeToSeconds, toSecondsString } from "../core/time.js";
 import { callWithUserAccess } from "../auth/user.js";
 
+export const IM_SEARCH_MESSAGES_PATH = "/open-apis/search/v2/message";
+
 function formatMessageContent(item) {
   const rawContent = item.body?.content;
   if (!rawContent) {
@@ -118,7 +120,7 @@ async function searchMessages(config, accessToken, params) {
   const time = resolveTimeRange(params);
   const searchResponse = await requestJson({
     baseUrl: config.baseUrl,
-    path: "/open-apis/search/v1/message/create",
+    path: IM_SEARCH_MESSAGES_PATH,
     method: "POST",
     accessToken,
     query: {

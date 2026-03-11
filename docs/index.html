@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feishu Codex Skills</title>
+    <style>
+      :root {
+        --paper: #f4efe8;
+        --card: rgba(255, 255, 255, 0.62);
+        --line: rgba(16, 24, 24, 0.1);
+        --ink: #0e1717;
+        --muted: #556261;
+        --accent: #0a8a73;
+        --accent-soft: rgba(10, 138, 115, 0.12);
+        --shadow: 0 24px 60px rgba(16, 24, 24, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 10%, rgba(10, 138, 115, 0.1), transparent 22%),
+          radial-gradient(circle at 88% 86%, rgba(10, 138, 115, 0.08), transparent 20%),
+          linear-gradient(180deg, #f8f4ee 0%, var(--paper) 100%);
+        font-family: "Avenir Next", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+        display: grid;
+        place-items: center;
+      }
+
+      .page {
+        width: 100%;
+        min-height: 100vh;
+        padding: 24px 16px;
+        display: grid;
+        place-items: center;
+      }
+
+      .frame {
+        width: min(100%, 760px);
+        aspect-ratio: 9 / 16;
+        padding: 34px 32px;
+        border: 1px solid var(--line);
+        border-radius: 36px;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.42));
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 18px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 18px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      h1 {
+        margin: 18px 0 18px;
+        font-size: clamp(68px, 9vw, 108px);
+        line-height: 0.9;
+        letter-spacing: -0.06em;
+      }
+
+      .lead {
+        margin: 0;
+        font-size: clamp(24px, 3vw, 34px);
+        line-height: 1.46;
+        color: var(--muted);
+      }
+
+      .stack {
+        display: grid;
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .card {
+        padding: 22px 22px 24px;
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: var(--card);
+      }
+
+      .card strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: clamp(32px, 4vw, 42px);
+        line-height: 1.06;
+        letter-spacing: -0.04em;
+      }
+
+      .card p {
+        margin: 0;
+        font-size: clamp(22px, 2.5vw, 28px);
+        line-height: 1.46;
+        color: var(--muted);
+      }
+
+      .capability-subtitle {
+        margin: -2px 0 14px;
+        font-size: 20px;
+        line-height: 1.4;
+        color: var(--muted);
+      }
+
+      .capability-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .capability-list li {
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.54);
+        color: var(--ink);
+        font-weight: 700;
+        text-align: center;
+      }
+
+      @media (max-width: 1180px) {
+        .page {
+          padding: 12px;
+        }
+
+        .frame {
+          width: min(100%, 680px);
+          min-height: calc(100vh - 24px);
+          aspect-ratio: auto;
+          padding: 26px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="frame">
+        <div>
+          <div class="badge">Feishu Codex Skills</div>
+          <h1>把飞书能力，<br />直接装进 Codex。</h1>
+          <p class="lead">飞书官方的好处，是 AI 不只是聊天机器人，而是能直接写文档、建多维表格、约日程、管任务。</p>
+        </div>
+
+        <div class="stack">
+          <article class="card">
+            <strong>安装方便</strong>
+            <p>直接把 GitHub 仓库地址发给 Codex，就能让它通过官方 Skill Installer 安装。</p>
+          </article>
+
+          <article class="card">
+            <strong>能力覆盖</strong>
+            <p class="capability-subtitle">每个模块</p>
+            <ul class="capability-list">
+              <li>云文档</li>
+              <li>消息读取</li>
+              <li>日历</li>
+              <li>任务</li>
+              <li>多维表格</li>
+              <li>诊断排障</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

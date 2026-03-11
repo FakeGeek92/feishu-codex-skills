@@ -9,6 +9,7 @@ import { readEnvConfig } from "../internal/runtime-src/core/config.js";
 import { createTokenStore } from "../internal/runtime-src/auth/token-store.js";
 import { createTenantTokenCache } from "../internal/runtime-src/auth/tenant-cache.js";
 import { getRequiredScopes } from "../internal/runtime-src/core/scopes.js";
+import { IM_SEARCH_MESSAGES_PATH } from "../internal/runtime-src/domains/im.js";
 
 test("formatOk builds the shared success envelope", () => {
   const result = formatOk({ answer: 42 }, { source: "test" });
@@ -104,4 +105,8 @@ test("calendar event reads include calendar container read scope", () => {
     getRequiredScopes("feishu_calendar_event.instance_view"),
     ["calendar:calendar:read", "calendar:calendar.event:read"]
   );
+});
+
+test("IM message search uses the current search v2 endpoint", () => {
+  assert.equal(IM_SEARCH_MESSAGES_PATH, "/open-apis/search/v2/message");
 });

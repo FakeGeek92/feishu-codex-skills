@@ -18,11 +18,21 @@ export FEISHU_BASE_URL=https://open.larksuite.com
 ```
 
 ## 安装方式
+### 直接告诉 codex
 
-正式仓库：
+用自然语言的方式告诉 codex 帮你安装
 
 ```text
-FakeGeek92/feishu-codex-skills
+帮我安装这组飞书的 skills
+https://github.com/FakeGeek92/feishu-codex-skills
+```
+
+也可以只安装单个 skill：
+
+
+```text
+帮我安装飞书多维表格的 skill
+https://github.com/FakeGeek92/feishu-codex-skills
 ```
 
 把这个 GitHub 仓库路径给 Codex 后，Codex 可以通过官方 Skill Installer 执行 `install-skill-from-github.py --repo ... --path ...` 来安装；不是自动 `git clone`，而是按 skill 目录下载和安装。

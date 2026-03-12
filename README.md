@@ -35,7 +35,16 @@ https://github.com/FakeGeek92/feishu-codex-skills
 https://github.com/FakeGeek92/feishu-codex-skills
 ```
 
+如果你是升级已有 skill，可以直接明确说要覆盖旧版本：
+
+```text
+帮我从这个仓库升级这组飞书 skills；如果 ~/.codex/skills 下已有同名旧版本，请先删除旧目录再重新安装
+https://github.com/FakeGeek92/feishu-codex-skills
+```
+
 把这个 GitHub 仓库路径给 Codex 后，Codex 可以通过官方 Skill Installer 执行 `install-skill-from-github.py --repo ... --path ...` 来安装；不是自动 `git clone`，而是按 skill 目录下载和安装。
+
+注意：官方 Skill Installer 遇到 `~/.codex/skills/<skill-name>` 已存在时会直接报错，不会自动覆盖。因此“升级”这个仓库里的 skill，实际做法是先删除旧目录，再重新安装同名 skill。
 
 ### 列出可安装 skills
 
@@ -53,6 +62,17 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
   --path skills/.curated/feishu-task
 ```
 
+### 升级单个 skill（覆盖旧版本）
+
+如果你本地改过这个 skill，请先自行备份；下面的命令会直接删除旧目录再重装：
+
+```bash
+rm -rf ~/.codex/skills/feishu-task && \
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --repo FakeGeek92/feishu-codex-skills \
+  --path skills/.curated/feishu-task
+```
+
 ### 一次安装全部 curated skill
 
 ```bash
@@ -60,8 +80,53 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
   --repo FakeGeek92/feishu-codex-skills \
   --path \
   skills/.curated/feishu-bitable \
-  skills/.curated/feishu-chat \
   skills/.curated/feishu-calendar \
+  skills/.curated/feishu-chat \
+  skills/.curated/feishu-create-doc \
+  skills/.curated/feishu-doc-comments \
+  skills/.curated/feishu-doc-media \
+  skills/.curated/feishu-drive-file \
+  skills/.curated/feishu-fetch-doc \
+  skills/.curated/feishu-im-read \
+  skills/.curated/feishu-im-write \
+  skills/.curated/feishu-search-doc \
+  skills/.curated/feishu-sheet \
+  skills/.curated/feishu-task \
+  skills/.curated/feishu-troubleshoot \
+  skills/.curated/feishu-update-doc \
+  skills/.curated/feishu-user \
+  skills/.curated/feishu-wiki
+```
+
+### 升级全部 curated skill（覆盖旧版本）
+
+如果你想从这个仓库整体升级到最新 curated 版本，可以直接覆盖安装：
+
+```bash
+rm -rf \
+  ~/.codex/skills/feishu-bitable \
+  ~/.codex/skills/feishu-calendar \
+  ~/.codex/skills/feishu-chat \
+  ~/.codex/skills/feishu-create-doc \
+  ~/.codex/skills/feishu-doc-comments \
+  ~/.codex/skills/feishu-doc-media \
+  ~/.codex/skills/feishu-drive-file \
+  ~/.codex/skills/feishu-fetch-doc \
+  ~/.codex/skills/feishu-im-read \
+  ~/.codex/skills/feishu-im-write \
+  ~/.codex/skills/feishu-search-doc \
+  ~/.codex/skills/feishu-sheet \
+  ~/.codex/skills/feishu-task \
+  ~/.codex/skills/feishu-troubleshoot \
+  ~/.codex/skills/feishu-update-doc \
+  ~/.codex/skills/feishu-user \
+  ~/.codex/skills/feishu-wiki && \
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --repo FakeGeek92/feishu-codex-skills \
+  --path \
+  skills/.curated/feishu-bitable \
+  skills/.curated/feishu-calendar \
+  skills/.curated/feishu-chat \
   skills/.curated/feishu-create-doc \
   skills/.curated/feishu-doc-comments \
   skills/.curated/feishu-doc-media \

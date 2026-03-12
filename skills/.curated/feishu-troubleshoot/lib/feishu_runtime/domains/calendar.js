@@ -42,6 +42,53 @@ async function withCalendar(config, toolAction, callback) {
   return callWithUserAccess(config, toolAction, callback);
 }
 
+async function runCalendarResource(config, params) {
+  switch (params.action) {
+    case "list":
+      return withCalendar(config, "feishu_calendar_calendar.list", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: "/open-apis/calendar/v4/calendars",
+          accessToken,
+          query: {
+            page_size: params.page_size,
+            page_token: params.page_token
+          }
+        });
+        return {
+          calendars: response.data?.calendar_list || [],
+          has_more: response.data?.has_more || false,
+          page_token: response.data?.page_token
+        };
+      });
+    case "get":
+      return withCalendar(config, "feishu_calendar_calendar.get", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: `/open-apis/calendar/v4/calendars/${params.calendar_id}`,
+          accessToken
+        });
+        return {
+          calendar: response.data?.calendar || response.data
+        };
+      });
+    case "primary":
+      return withCalendar(config, "feishu_calendar_calendar.primary", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: "/open-apis/calendar/v4/calendars/primary",
+          method: "POST",
+          accessToken
+        });
+        return {
+          calendars: response.data?.calendars || []
+        };
+      });
+    default:
+      throw new Error(`Unsupported calendar action: ${params.action}`);
+  }
+}
+
 async function runEvent(config, params) {
   switch (params.action) {
     case "create":
@@ -260,10 +307,10 @@ async function runAttendee(config, params) {
           body: {
             attendees: params.attendees.map((item) => ({
               type: item.type,
-              user_id: item.type === "user" ? item.attendee_id : undefined,
-              chat_id: item.type === "chat" ? item.attendee_id : undefined,
-              room_id: item.type === "resource" ? item.attendee_id : undefined,
-              third_party_email: item.type === "third_party" ? item.attendee_id : undefined,
+              user_id: item.type === "user" ? (item.attendee_id || item.id) : undefined,
+              chat_id: item.type === "chat" ? (item.attendee_id || item.id) : undefined,
+              room_id: item.type === "resource" ? (item.attendee_id || item.id) : undefined,
+              third_party_email: item.type === "third_party" ? (item.attendee_id || item.id) : undefined,
               is_optional: false
             })),
             need_notification: params.need_notification ?? true
@@ -298,9 +345,41 @@ async function runAttendee(config, params) {
           query: { page_size: 500, user_id_type: "open_id" }
         });
         const attendees = list.data.items || [];
-        const attendeeIds = attendees
-          .filter((item) => params.user_open_ids.includes(item.user_id) && !item.is_organizer)
-          .map((item) => item.attendee_id);
+        const openIdToAttendeeId = new Map();
+        const organizerOpenIds = new Set();
+        for (const item of attendees) {
+          if (item.user_id && item.attendee_id) {
+            openIdToAttendeeId.set(item.user_id, item.attendee_id);
+            if (item.is_organizer) {
+              organizerOpenIds.add(item.user_id);
+            }
+          }
+        }
+        const attemptingToDeleteOrganizers = params.user_open_ids.filter((id) => organizerOpenIds.has(id));
+        if (attemptingToDeleteOrganizers.length > 0) {
+          return {
+            error: "不能删除日程组织者（organizer）",
+            organizers_cannot_delete: attemptingToDeleteOrganizers,
+            hint: "日程组织者不应被移除。如需移除组织者，请考虑删除整个日程或转移组织者权限。"
+          };
+        }
+
+        const attendeeIds = [];
+        const notFound = [];
+        for (const openId of params.user_open_ids) {
+          const attendeeId = openIdToAttendeeId.get(openId);
+          if (attendeeId) {
+            attendeeIds.push(attendeeId);
+          } else {
+            notFound.push(openId);
+          }
+        }
+        if (attendeeIds.length === 0) {
+          return {
+            error: "None of the provided open_ids were found in the attendee list",
+            not_found: notFound
+          };
+        }
         await requestJson({
           baseUrl: config.baseUrl,
           path: `/open-apis/calendar/v4/calendars/${params.calendar_id}/events/${params.event_id}/attendees/batch_delete`,
@@ -314,7 +393,8 @@ async function runAttendee(config, params) {
         });
         return {
           success: true,
-          attendee_ids: attendeeIds
+          removed_count: attendeeIds.length,
+          not_found: notFound.length > 0 ? notFound : undefined
         };
       });
     default:
@@ -346,6 +426,8 @@ async function runFreebusy(config, params) {
 export async function runCalendar(resource, params, env = process.env) {
   const config = readEnvConfig(env);
   switch (resource) {
+    case "calendar":
+      return runCalendarResource(config, params);
     case "event":
       return runEvent(config, params);
     case "attendee":

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Drive File"
+  short_description: "Manage Feishu Drive files and folders"
+  default_prompt: "Use $feishu-drive-file to list, inspect, copy, move, delete, upload, or download Feishu Drive files and folders. Do not use it for IM message attachments."

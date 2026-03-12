@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu User"
+  short_description: "Get the current user or search directory users"
+  default_prompt: "Use $feishu-user for directory identity lookups: get the current Feishu user, fetch a user by id, or search users by keyword. Do not use it for chats or message history."

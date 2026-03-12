@@ -33,7 +33,12 @@ function buildHeaders(accessToken, extraHeaders, body) {
     headers.Authorization = `Bearer ${accessToken}`;
   }
 
-  if (body !== undefined && !(body instanceof URLSearchParams) && !headers["Content-Type"]) {
+  if (
+    body !== undefined &&
+    !(body instanceof URLSearchParams) &&
+    !(typeof FormData !== "undefined" && body instanceof FormData) &&
+    !headers["Content-Type"]
+  ) {
     headers["Content-Type"] = "application/json";
   }
 
@@ -52,7 +57,12 @@ function normalizeBody(body, headers) {
     return body.toString();
   }
 
-  if (headers["Content-Type"] === "application/json") {
+  if (typeof FormData !== "undefined" && body instanceof FormData) {
+    return body;
+  }
+
+  const contentType = String(headers["Content-Type"] || headers["content-type"] || "").toLowerCase();
+  if (contentType.startsWith("application/json")) {
     return JSON.stringify(body);
   }
 

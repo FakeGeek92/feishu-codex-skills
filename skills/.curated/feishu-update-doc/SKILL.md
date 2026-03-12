@@ -9,6 +9,7 @@ description: Use when updating a Feishu cloud document with append, overwrite, r
 - 用户授权会持久化到共享 token store；同一 `FEISHU_APP_ID` 下其他已安装 skill 会复用，不需要各自重复授权
 - 执行命令：`node scripts/update-doc.js '<json>'`
 - 这个脚本内部仍然调用 Feishu 官方 MCP `update-doc`
+- 文档媒体和知识库配套能力请使用 `feishu-doc-media`、`feishu-wiki`
 
 下面开始是插件原始 skill 正文。
 

@@ -87,7 +87,7 @@ async function handleApp(config, params) {
         const response = await requestJson({
           baseUrl: config.baseUrl,
           path: `/open-apis/bitable/v1/apps/${params.app_token}`,
-          method: "PATCH",
+          method: "PUT",
           accessToken,
           body: {
             name: params.name,
@@ -353,7 +353,7 @@ async function handleRecord(config, params) {
           path: `${basePath}/batch_delete`,
           method: "POST",
           accessToken,
-          body: { record_ids: params.record_ids }
+          body: { records: params.record_ids }
         });
         return { success: true };
       });

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Doc Media"
+  short_description: "Insert local media into docx files or download doc assets"
+  default_prompt: "Use $feishu-doc-media to insert local images or files into Feishu docx documents, or to download doc media and whiteboards. Do not use it for URL images or plain text edits."

@@ -1,5 +1,11 @@
 import { FeishuSkillError } from "../core/errors.js";
-import { getMissingScopes, getRequiredScopes, hasAllScopes, unionScopes } from "../core/scopes.js";
+import {
+  filterSensitiveScopes,
+  getMissingScopes,
+  getRequiredScopes,
+  hasAllScopes,
+  unionScopes
+} from "../core/scopes.js";
 import { requestJson } from "../core/http.js";
 import { createTokenStore, tokenStatus } from "./token-store.js";
 import { pollDeviceToken, requestDeviceAuthorization, resolveOAuthEndpoints } from "./device-flow.js";
@@ -223,8 +229,9 @@ export async function getStoredUserTokenStatus(config) {
 }
 
 export async function preauthorizeAllScopes(config, requiredScopes) {
+  const safeScopes = filterSensitiveScopes(unionScopes(requiredScopes));
   const before = await getStoredUserTokenStatus(config);
-  const stored = await ensureUserAuthorization(config, requiredScopes);
+  const stored = await ensureUserAuthorization(config, safeScopes);
 
   return {
     authorized: true,
@@ -234,8 +241,8 @@ export async function preauthorizeAllScopes(config, requiredScopes) {
     refreshExpiresAt: stored.refreshExpiresAt,
     scope: stored.scope,
     tokenStatus: tokenStatus(stored),
-    requestedScopes: unionScopes(requiredScopes),
-    authorizationTriggered: !before.authorized || !hasAllScopes(before.scope || "", requiredScopes)
+    requestedScopes: safeScopes,
+    authorizationTriggered: !before.authorized || !hasAllScopes(before.scope || "", safeScopes)
   };
 }
 

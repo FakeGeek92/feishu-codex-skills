@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu IM Write"
+  short_description: "Send or reply to messages as the signed-in user"
+  default_prompt: "Use $feishu-im-write only when the user explicitly wants to send or reply to a Feishu message as themself. Confirm the recipient and final content before sending."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Search Doc"
+  short_description: "Search Feishu docs and wiki nodes with filters"
+  default_prompt: "Use $feishu-search-doc to search Feishu docs and wiki nodes by keyword, filter, sort, or empty-recency search. Do not use it when the user needs full document content."

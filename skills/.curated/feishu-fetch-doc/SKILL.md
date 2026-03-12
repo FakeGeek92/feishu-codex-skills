@@ -9,7 +9,7 @@ description: Use when fetching Feishu cloud document content as Markdown in Code
 - 用户授权会持久化到共享 token store；同一 `FEISHU_APP_ID` 下其他已安装 skill 会复用，不需要各自重复授权
 - 执行命令：`node scripts/fetch-doc.js '<json>'`
 - 这个脚本内部仍然调用 Feishu 官方 MCP `fetch-doc`
-- 原文中提到的 `feishu_doc_media` / `feishu_wiki_space_node` 是上游推荐组合；本仓库 v1 不额外提供对应 standalone wrapper
+- 相关配套 wrapper 现已提供：`feishu-doc-media`、`feishu-wiki`、`feishu-sheet`
 
 下面开始是插件原始 skill 正文。
 

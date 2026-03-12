@@ -9,6 +9,8 @@ description: Use when creating, querying, updating, or organizing Feishu tasks a
 - 用户授权会持久化到共享 token store；同一 `FEISHU_APP_ID` 下其他已安装 skill 会复用，不需要各自重复授权
 - `feishu_task_task` -> `node scripts/task.js task '<json>'`
 - `feishu_task_tasklist` -> `node scripts/task.js tasklist '<json>'`
+- `feishu_task_comment` -> `node scripts/task.js comment '<json>'`
+- `feishu_task_subtask` -> `node scripts/task.js subtask '<json>'`
 - 原文中提到的 `SenderId`，在 standalone 场景里对应你显式传入的授权用户 `open_id`
 
 下面开始是插件原始 skill 正文；原工具名保持不变，在 standalone 包里按上面的脚本映射执行。

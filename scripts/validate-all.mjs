@@ -4,6 +4,7 @@ import { spawnSync } from "node:child_process";
 
 const rootDir = path.resolve(import.meta.dirname, "..");
 const curatedDir = path.join(rootDir, "skills", ".curated");
+const testsDir = path.join(rootDir, "tests");
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -25,8 +26,13 @@ async function main() {
     run("python3", ["scripts/quick_validate.py", path.join(curatedDir, skillName)]);
   }
 
-  run(process.execPath, ["--check", "tests/runtime.test.js"]);
-  run(process.execPath, ["--check", "tests/wrappers.test.js"]);
+  const testFiles = (await readdir(testsDir))
+    .filter((entry) => entry.endsWith(".test.js"))
+    .sort();
+  for (const testFile of testFiles) {
+    run(process.execPath, ["--check", path.join("tests", testFile)]);
+  }
+
   run("npm", ["test"]);
 }
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Chat"
+  short_description: "Search chats, inspect chat details, and list members"
+  default_prompt: "Use $feishu-chat to search visible chats, inspect chat details, or list chat members. Do not use it to read history or send messages."

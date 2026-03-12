@@ -2,7 +2,7 @@ import { readEnvConfig } from "../core/config.js";
 import { getAppScopeStatus, getStoredUserTokenStatus, preauthorizeAllScopes } from "../auth/user.js";
 import { getTenantAccessToken } from "../auth/tenant.js";
 import { requestJson } from "../core/http.js";
-import { getAllRequiredScopes } from "../core/scopes.js";
+import { filterSensitiveScopes, getAllRequiredScopes } from "../core/scopes.js";
 
 async function runDoctor(config, params) {
   const result = {
@@ -48,13 +48,15 @@ async function runDoctor(config, params) {
 export async function runTroubleshoot(params = {}, env = process.env) {
   const config = readEnvConfig(env);
   if (params.action === "preauth_all") {
-    const requiredScopes = getAllRequiredScopes();
+    const allScopes = getAllRequiredScopes();
+    const requiredScopes = filterSensitiveScopes(allScopes);
     return {
       action: "preauth_all",
       app_id: config.appId,
       oauth_store_dir: config.oauthStoreDir,
       requested_scope_count: requiredScopes.length,
       requested_scopes: requiredScopes,
+      skipped_sensitive_scopes: allScopes.filter((scope) => !requiredScopes.includes(scope)),
       user_auth: await preauthorizeAllScopes(config, requiredScopes)
     };
   }

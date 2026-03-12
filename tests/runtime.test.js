@@ -96,14 +96,14 @@ test("tenant token cache reuses a fresh token", async () => {
   await rm(baseDir, { recursive: true, force: true });
 });
 
-test("calendar event reads include calendar container read scope", () => {
+test("calendar event reads match the original plugin scope model", () => {
   assert.deepEqual(
     getRequiredScopes("feishu_calendar_event.list"),
-    ["calendar:calendar:read", "calendar:calendar.event:read"]
+    ["calendar:calendar.event:read"]
   );
   assert.deepEqual(
     getRequiredScopes("feishu_calendar_event.instance_view"),
-    ["calendar:calendar:read", "calendar:calendar.event:read"]
+    ["calendar:calendar.event:read"]
   );
 });
 

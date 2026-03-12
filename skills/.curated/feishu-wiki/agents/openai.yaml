@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Wiki"
+  short_description: "Manage wiki spaces and nodes in the hierarchy"
+  default_prompt: "Use $feishu-wiki to list wiki spaces, inspect nodes, create wiki nodes, or move and copy nodes in the hierarchy. Do not use it to edit the underlying document content."

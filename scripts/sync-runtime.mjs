@@ -1,20 +1,9 @@
-import { cp, readdir, rm } from "node:fs/promises";
+import { cp, readdir, rm, stat } from "node:fs/promises";
 import path from "node:path";
 
 const rootDir = path.resolve(import.meta.dirname, "..");
 const runtimeSrcDir = path.join(rootDir, "internal", "runtime-src");
 const curatedDir = path.join(rootDir, "skills", ".curated");
-
-const executableSkills = [
-  "feishu-bitable",
-  "feishu-calendar",
-  "feishu-create-doc",
-  "feishu-fetch-doc",
-  "feishu-im-read",
-  "feishu-task",
-  "feishu-troubleshoot",
-  "feishu-update-doc"
-];
 
 async function ensureSkillExists(skillName) {
   const entries = await readdir(curatedDir);
@@ -23,7 +12,21 @@ async function ensureSkillExists(skillName) {
   }
 }
 
+async function getExecutableSkills() {
+  const entries = (await readdir(curatedDir)).sort();
+  const skills = [];
+  for (const entry of entries) {
+    const fullPath = path.join(curatedDir, entry);
+    const info = await stat(fullPath);
+    if (info.isDirectory()) {
+      skills.push(entry);
+    }
+  }
+  return skills;
+}
+
 async function main() {
+  const executableSkills = await getExecutableSkills();
   for (const skillName of executableSkills) {
     await ensureSkillExists(skillName);
     const destination = path.join(curatedDir, skillName, "lib", "feishu_runtime");

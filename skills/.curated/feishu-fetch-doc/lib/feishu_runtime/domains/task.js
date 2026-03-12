@@ -259,6 +259,108 @@ async function runTasklistResource(config, params) {
   }
 }
 
+async function runCommentResource(config, params) {
+  switch (params.action) {
+    case "create":
+      return withTaskAccess(config, "feishu_task_comment.create", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: "/open-apis/task/v2/comments",
+          method: "POST",
+          accessToken,
+          query: { user_id_type: "open_id" },
+          body: {
+            content: params.content,
+            resource_type: "task",
+            resource_id: params.task_guid,
+            reply_to_comment_id: params.reply_to_comment_id
+          }
+        });
+        return { comment: response.data?.comment };
+      });
+    case "list":
+      return withTaskAccess(config, "feishu_task_comment.list", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: "/open-apis/task/v2/comments",
+          accessToken,
+          query: {
+            resource_type: "task",
+            resource_id: params.resource_id,
+            direction: params.direction,
+            page_size: params.page_size,
+            page_token: params.page_token,
+            user_id_type: "open_id"
+          }
+        });
+        return {
+          comments: response.data?.items || [],
+          has_more: response.data?.has_more || false,
+          page_token: response.data?.page_token
+        };
+      });
+    case "get":
+      return withTaskAccess(config, "feishu_task_comment.get", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: `/open-apis/task/v2/comments/${params.comment_id}`,
+          accessToken,
+          query: { user_id_type: "open_id" }
+        });
+        return { comment: response.data?.comment };
+      });
+    default:
+      throw new Error(`Unsupported task comment action: ${params.action}`);
+  }
+}
+
+async function runSubtaskResource(config, params) {
+  switch (params.action) {
+    case "create":
+      return withTaskAccess(config, "feishu_task_subtask.create", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: `/open-apis/task/v2/tasks/${params.task_guid}/subtasks`,
+          method: "POST",
+          accessToken,
+          query: { user_id_type: "open_id" },
+          body: {
+            summary: params.summary,
+            description: params.description,
+            due: buildDueWindow(params.due),
+            start: buildDueWindow(params.start),
+            members: params.members?.map((member) => ({
+              id: member.id,
+              type: "user",
+              role: member.role || "assignee"
+            }))
+          }
+        });
+        return { subtask: response.data?.subtask };
+      });
+    case "list":
+      return withTaskAccess(config, "feishu_task_subtask.list", async (accessToken) => {
+        const response = await requestJson({
+          baseUrl: config.baseUrl,
+          path: `/open-apis/task/v2/tasks/${params.task_guid}/subtasks`,
+          accessToken,
+          query: {
+            page_size: params.page_size,
+            page_token: params.page_token,
+            user_id_type: "open_id"
+          }
+        });
+        return {
+          subtasks: response.data?.items || [],
+          has_more: response.data?.has_more || false,
+          page_token: response.data?.page_token
+        };
+      });
+    default:
+      throw new Error(`Unsupported task subtask action: ${params.action}`);
+  }
+}
+
 export async function runTask(resource, params, env = process.env) {
   const config = readEnvConfig(env);
   switch (resource) {
@@ -266,6 +368,10 @@ export async function runTask(resource, params, env = process.env) {
       return runTaskResource(config, params);
     case "tasklist":
       return runTasklistResource(config, params);
+    case "comment":
+      return runCommentResource(config, params);
+    case "subtask":
+      return runSubtaskResource(config, params);
     default:
       throw new Error(`Unsupported task resource: ${resource}`);
   }

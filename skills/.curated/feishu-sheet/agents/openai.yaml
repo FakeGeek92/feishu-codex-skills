@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Sheet"
+  short_description: "Inspect, read, write, append, find, create, or export sheets"
+  default_prompt: "Use $feishu-sheet to inspect, read, write, append, find, create, or export Feishu spreadsheets, including wiki-backed sheets. Do not use it for Bitable-style databases."

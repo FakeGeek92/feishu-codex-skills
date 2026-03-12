@@ -7,6 +7,7 @@ description: Use when creating, querying, updating, or replying to Feishu calend
 
 - 共享环境变量：`FEISHU_APP_ID`、`FEISHU_APP_SECRET`，可选 `FEISHU_BASE_URL`、`FEISHU_OAUTH_STORE_DIR`
 - 用户授权会持久化到共享 token store；同一 `FEISHU_APP_ID` 下其他已安装 skill 会复用，不需要各自重复授权
+- `feishu_calendar_calendar` -> `node scripts/calendar.js calendar '<json>'`
 - `feishu_calendar_event` -> `node scripts/calendar.js event '<json>'`
 - `feishu_calendar_event_attendee` -> `node scripts/calendar.js attendee '<json>'`
 - `feishu_calendar_freebusy` -> `node scripts/calendar.js freebusy '<json>'`
@@ -71,7 +72,7 @@ description: Use when creating, querying, updating, or replying to Feishu calend
 ### 3. 统一使用 open_id（ou_...格式）
 
 - ✅ 创建日程：`user_open_id = SenderId`
-- ✅ 邀请参会人：`attendees[].id = "ou_xxx"`
+- ✅ 邀请参会人：`attendees[].attendee_id = "ou_xxx"`（standalone 也兼容 `attendees[].id`）
 - ✅ 删除参会人：`user_open_ids = ["ou_xxx"]`（工具已优化，直接传 open_id 即可）
 
 ⚠️ **ID 格式区分**：

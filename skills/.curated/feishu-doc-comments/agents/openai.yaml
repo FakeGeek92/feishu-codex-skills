@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Doc Comments"
+  short_description: "List, create, or resolve whole-document comments"
+  default_prompt: "Use $feishu-doc-comments to list, create, or resolve whole-document comments on Feishu docs, sheets, slides, files, or wiki-backed docs. Do not use it to edit document body text."

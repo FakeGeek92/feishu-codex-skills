@@ -53,20 +53,29 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
   --path skills/.curated/feishu-task
 ```
 
-### 一次安装全部 8 个 skill
+### 一次安装全部 curated skill
 
 ```bash
 python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
   --repo FakeGeek92/feishu-codex-skills \
   --path \
   skills/.curated/feishu-bitable \
+  skills/.curated/feishu-chat \
   skills/.curated/feishu-calendar \
   skills/.curated/feishu-create-doc \
+  skills/.curated/feishu-doc-comments \
+  skills/.curated/feishu-doc-media \
+  skills/.curated/feishu-drive-file \
   skills/.curated/feishu-fetch-doc \
   skills/.curated/feishu-im-read \
+  skills/.curated/feishu-im-write \
+  skills/.curated/feishu-search-doc \
+  skills/.curated/feishu-sheet \
   skills/.curated/feishu-task \
   skills/.curated/feishu-troubleshoot \
-  skills/.curated/feishu-update-doc
+  skills/.curated/feishu-update-doc \
+  skills/.curated/feishu-user \
+  skills/.curated/feishu-wiki
 ```
 
 安装完成后，重启 Codex 以加载新 skills。
@@ -99,7 +108,7 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 - `feishu-fetch-doc`
 - `feishu-update-doc`
 
-如果你想一次配齐，直接安装全部 8 个能力型 skill。
+如果你想一次配齐，直接安装全部 curated skill。
 
 ### 3. 配置应用级凭证
 
@@ -145,7 +154,7 @@ node ~/.codex/skills/feishu-troubleshoot/scripts/troubleshoot.js '{"action":"doc
 node ~/.codex/skills/feishu-troubleshoot/scripts/troubleshoot.js '{"action":"preauth_all"}'
 ```
 
-按照终端提示完成授权后，再去使用文档、任务、日历、多维表格和消息读取等 skill。
+当前仓库的 `preauth_all` 会按 curated skill 能力面一次申请所需的用户 scope，其中也包括 `feishu-im-write` 使用的用户发消息权限。按照终端提示确认授权后，再去使用文档、任务、日历、多维表格、消息读取和消息发送等 skill。
 
 ## 鉴权模型
 
@@ -200,24 +209,47 @@ ${CODEX_HOME:-~/.codex}/feishu-oauth/<appId>
 | Skill | 作用 |
 | --- | --- |
 | `feishu-bitable` | 管理多维表格应用、数据表、字段、视图和记录 |
+| `feishu-chat` | 搜索群聊、获取群详情、查询群成员 |
 | `feishu-calendar` | 管理日历、日程、参会人和忙闲信息 |
 | `feishu-create-doc` | 创建飞书云文档 |
+| `feishu-doc-comments` | 管理云文档评论 |
+| `feishu-doc-media` | 插入或下载文档媒体 |
+| `feishu-drive-file` | 管理云空间文件 |
 | `feishu-fetch-doc` | 获取飞书云文档内容 |
 | `feishu-im-read` | 读取飞书消息、搜索消息、下载消息资源 |
+| `feishu-im-write` | 以用户身份发送和回复飞书消息 |
+| `feishu-search-doc` | 搜索飞书文档和知识库 |
+| `feishu-sheet` | 创建、读写、查找和导出电子表格 |
 | `feishu-task` | 管理飞书任务和任务清单 |
 | `feishu-troubleshoot` | 诊断 app 凭证、tenant auth、用户授权和缺失 scope |
 | `feishu-update-doc` | 更新飞书云文档内容 |
+| `feishu-user` | 获取当前用户、按 ID 查询用户、搜索用户 |
+| `feishu-wiki` | 管理知识空间和 Wiki 节点 |
 
 ## 能力概览
 
 | 类别 | 能力 | 对应 skills |
 | --- | --- | --- |
-| 消息 | 读取群聊/私聊历史、话题回复、消息搜索、图片和文件下载 | `feishu-im-read` |
-| 云文档 | 创建云文档、读取云文档内容、更新云文档 | `feishu-create-doc` `feishu-fetch-doc` `feishu-update-doc` |
+| 消息 | 读取群聊/私聊历史、话题回复、消息搜索、图片和文件下载、以用户身份发消息 | `feishu-im-read` `feishu-im-write` |
+| 用户与群聊 | 获取用户、搜索用户、搜索群聊、查看群成员 | `feishu-user` `feishu-chat` |
+| 云文档 | 创建云文档、读取云文档内容、更新云文档、评论、媒体插入/下载 | `feishu-create-doc` `feishu-fetch-doc` `feishu-update-doc` `feishu-doc-comments` `feishu-doc-media` |
 | 多维表格 | 表格、数据表、字段、记录、视图管理 | `feishu-bitable` |
 | 日历 | 日历管理、日程管理、参会人管理、忙闲查询 | `feishu-calendar` |
+| 云空间与知识库 | 云空间文件管理、知识空间和节点管理 | `feishu-drive-file` `feishu-wiki` |
+| 电子表格与搜索 | 电子表格读写导出、文档和知识库搜索 | `feishu-sheet` `feishu-search-doc` |
 | 任务 | 任务、任务清单、成员与完成状态管理 | `feishu-task` |
 | 诊断 | 检查 app 凭证、tenant auth、用户授权、缺失 scope | `feishu-troubleshoot` |
+
+## 验证状态
+
+截至 2026-03-12，这个仓库已经按 standalone 形态完成了全量验收：
+
+- `17` 个 curated Feishu skill 全部纳入验证范围
+- `node scripts/validate-all.mjs` 通过
+- `npm test` 通过
+- `RUN_FEISHU_LIVE=1 FEISHU_LIVE_STRICT=1 node --test tests/live.test.js` 通过，且 `0 skip`
+
+strict live suite 会动态创建并尽量清理测试资源。对于像 Wiki space / node 这类当前能力面没有对称删除动作的资源，测试会把残留 ID 输出到日志中，便于人工回收。
 
 ## 与原插件的关系
 
@@ -262,12 +294,6 @@ ${CODEX_HOME:-~/.codex}/feishu-oauth/<appId>
 正常情况下不用。
 
 所有 skill 默认共享同一个 token store：`${CODEX_HOME:-~/.codex}/feishu-oauth/<appId>`。只要 `FEISHU_APP_ID` 不变，完成一次授权后，其他已安装 skill 会复用同一份 token。
-
-### 为什么这里没有原插件里的 pairing？
-
-因为 `pairing` 属于 OpenClaw Feishu channel 的会话准入控制，解决的是“谁可以和 bot 建立对话”。
-
-这个仓库是 standalone Codex skills，不负责 Feishu channel 接入，因此不需要把 `pairing` 放进安装和授权主流程。
 
 ### 为什么这里没有原插件里的 pairing？
 

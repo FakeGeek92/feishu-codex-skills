@@ -8,6 +8,21 @@ import { fromMillis, parseRelativeTimeToSeconds, toSecondsString } from "../core
 import { callWithUserAccess } from "../auth/user.js";
 
 export const IM_SEARCH_MESSAGES_PATH = "/open-apis/search/v2/message";
+const MIME_TO_EXT = {
+  "image/png": ".png",
+  "image/jpeg": ".jpg",
+  "image/jpg": ".jpg",
+  "image/gif": ".gif",
+  "image/webp": ".webp",
+  "application/pdf": ".pdf",
+  "application/msword": ".doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx",
+  "application/vnd.ms-excel": ".xls",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ".xlsx",
+  "application/vnd.ms-powerpoint": ".ppt",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": ".pptx",
+  "text/plain": ".txt"
+};
 
 function formatMessageContent(item) {
   const rawContent = item.body?.content;
@@ -59,6 +74,94 @@ function formatMessage(item) {
       name: mention.name
     }))
   };
+}
+
+async function fetchChatContexts(config, accessToken, chatIds) {
+  if (chatIds.length === 0) {
+    return new Map();
+  }
+
+  const response = await requestJson({
+    baseUrl: config.baseUrl,
+    path: "/open-apis/im/v1/chats/batch_query",
+    method: "POST",
+    accessToken,
+    query: {
+      user_id_type: "open_id"
+    },
+    body: {
+      chat_ids: chatIds
+    }
+  });
+
+  const map = new Map();
+  for (const item of response.data?.items || []) {
+    if (item.chat_id) {
+      map.set(item.chat_id, {
+        name: item.name || "",
+        chat_mode: item.chat_mode || "",
+        p2p_target_id: item.p2p_target_id
+      });
+    }
+  }
+  return map;
+}
+
+async function resolveUserNames(config, accessToken, openIds) {
+  const entries = await Promise.all(openIds.map(async (openId) => {
+    try {
+      const response = await requestJson({
+        baseUrl: config.baseUrl,
+        path: `/open-apis/contact/v3/users/${openId}`,
+        accessToken,
+        query: {
+          user_id_type: "open_id"
+        }
+      });
+      return [openId, response.data?.user?.name];
+    } catch {
+      return [openId, undefined];
+    }
+  }));
+  return new Map(entries.filter(([, name]) => Boolean(name)));
+}
+
+async function enrichMessagesWithChatContext(config, accessToken, items, messages) {
+  const chatIds = [...new Set(items.map((item) => item.chat_id).filter(Boolean))];
+  const chatMap = await fetchChatContexts(config, accessToken, chatIds);
+  const p2pIds = [...new Set(
+    [...chatMap.values()].map((item) => item.p2p_target_id).filter(Boolean)
+  )];
+  const nameMap = await resolveUserNames(config, accessToken, p2pIds);
+
+  return messages.map((message, index) => {
+    const chatId = items[index]?.chat_id;
+    const chat = chatId ? chatMap.get(chatId) : undefined;
+    if (!chatId || !chat) {
+      return {
+        ...message,
+        chat_id: chatId
+      };
+    }
+    if (chat.chat_mode === "p2p" && chat.p2p_target_id) {
+      return {
+        ...message,
+        chat_id: chatId,
+        chat_type: "p2p",
+        chat_name: nameMap.get(chat.p2p_target_id),
+        chat_partner: {
+          open_id: chat.p2p_target_id,
+          name: nameMap.get(chat.p2p_target_id)
+        }
+      };
+    }
+    return {
+      ...message,
+      chat_id: chatId,
+      chat_type: chat.chat_mode,
+      chat_name: chat.name || undefined
+    };
+  });
 }
 
 function resolveTimeRange(params) {
@@ -160,8 +263,12 @@ async function searchMessages(config, accessToken, params) {
     }
   });
 
+  const rawItems = messageResponse.data.items || [];
+  const baseMessages = rawItems.map(formatMessage);
+  const messages = await enrichMessagesWithChatContext(config, accessToken, rawItems, baseMessages);
+
   return {
-    messages: (messageResponse.data.items || []).map(formatMessage),
+    messages,
     has_more: searchResponse.data.has_more || false,
     page_token: searchResponse.data.page_token
   };
@@ -176,7 +283,8 @@ async function fetchResource(config, accessToken, params) {
   });
   const outputDir = path.join(os.tmpdir(), "feishu-codex-skills");
   await mkdir(outputDir, { recursive: true });
-  const extension = params.type === "image" ? ".bin" : ".dat";
+  const mimeType = response.headers["content-type"]?.split(";")[0]?.trim();
+  const extension = MIME_TO_EXT[mimeType] || (params.type === "image" ? ".bin" : ".dat");
   const outputPath = path.join(outputDir, `${params.message_id}-${params.file_key}${extension}`);
   await writeFile(outputPath, response.buffer);
   return {
